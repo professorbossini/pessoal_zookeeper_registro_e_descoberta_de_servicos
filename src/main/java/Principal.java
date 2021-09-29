@@ -44,6 +44,7 @@ public class Principal {
     }
 
     public static void main(String[] args) throws InterruptedException, IOException, KeeperException {
+        System.out.println(args[0] + " " + args[1]);
         Principal principal = new Principal();
         EleicaoDeLider eleicaoDeLider = new EleicaoDeLider(principal.conectar());
         eleicaoDeLider.realizarCandidatura();

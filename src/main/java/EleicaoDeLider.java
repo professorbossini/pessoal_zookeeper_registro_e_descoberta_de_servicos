@@ -8,7 +8,16 @@ public class EleicaoDeLider {
     private static final String ELEICAO = "/eleicao";
     private String nomeDoZNodeDesseProcesso;
     private ZooKeeper zooKeeper;
+    private EleicaoCallback eleicaoCallback;
 
+    public EleicaoDeLider (ZooKeeper zooKeeper, EleicaoCallback eleicaoCallback){
+        //pede ajuda para o outro primeiro
+        this(zooKeeper);
+        //atribui logo a seguir
+        this.eleicaoCallback = eleicaoCallback;
+    }
+
+    //O outro construtor permanece inalterado
     public EleicaoDeLider (ZooKeeper zooKeeper){
         this.zooKeeper = zooKeeper;
         //observe a condição de corrida
@@ -51,6 +60,7 @@ public class EleicaoDeLider {
             //se for, declarar-se líder e encerrar por aqui
             if (oMenor.equals(nomeDoZNodeDesseProcesso)){
                 System.out.printf ("Me chamo %s e sou o líder.\n", nomeDoZNodeDesseProcesso);
+                eleicaoCallback.onEleitoLider();
                 return;
             }
             //se chegou aqui, não é o líder, avisar
@@ -65,6 +75,7 @@ public class EleicaoDeLider {
                     reeleicaoWatcher
             );
         }while (statPredecessor == null);
+        eleicaoCallback.onIndicadoATrabalhador();
         //avisar qual ZNode este processo está observando
         System.out.printf ("Estou observando o %s\n", nomePredecessor);
     }
