@@ -36,16 +36,20 @@ public class RegistroDeServicos {
 
     public void registroJuntoAoCluster (String configuracoes) throws
             InterruptedException, KeeperException {
-        this.zNodeAtual = this.zooKeeper.create(
-                String.format("%s/p_", REGISTRO_ZNODE),
-                configuracoes.getBytes(),
-                ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                //efêmero já que um processo pode se tornar inoperante
-                //sequêncial apenas para não termos problemas com
-                //nomes repetidos
-                CreateMode.EPHEMERAL_SEQUENTIAL
-        );
-        System.out.printf ("Registro realizado: %s", this.zNodeAtual);
+        if (this.zNodeAtual != null)
+            System.out.printf ("Processo [%s] já registrado\n", this.zNodeAtual);
+        else{
+            this.zNodeAtual = this.zooKeeper.create(
+                    String.format("%s/p_", REGISTRO_ZNODE),
+                    configuracoes.getBytes(),
+                    ZooDefs.Ids.OPEN_ACL_UNSAFE,
+                    //efêmero já que um processo pode se tornar inoperante
+                    //sequêncial apenas para não termos problemas com
+                    //nomes repetidos
+                    CreateMode.EPHEMERAL_SEQUENTIAL
+            );
+            System.out.printf ("Registro realizado: %s", this.zNodeAtual);
+        }
     }
 
 

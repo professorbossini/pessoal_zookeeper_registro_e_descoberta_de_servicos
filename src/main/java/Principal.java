@@ -44,9 +44,20 @@ public class Principal {
     }
 
     public static void main(String[] args) throws InterruptedException, IOException, KeeperException {
-        System.out.println(args[0] + " " + args[1]);
+        //usamos a porta 10000 por padrão, caso o usuário não informe uma
+        //o número 10000 é arbitrário
+        int porta = args.length >= 1 ? Integer.parseInt(args[0]): 10000;
         Principal principal = new Principal();
-        EleicaoDeLider eleicaoDeLider = new EleicaoDeLider(principal.conectar());
+        ZooKeeper zooKeeper = principal.conectar();
+        RegistroDeServicos registroDeServicos = new RegistroDeServicos(zooKeeper);
+        EleicaoCallback eleicaoCallback = new EleicaoCallbackImpl(
+                registroDeServicos,
+                porta
+        );
+        EleicaoDeLider eleicaoDeLider = new EleicaoDeLider(
+                zooKeeper,
+                eleicaoCallback
+        );
         eleicaoDeLider.realizarCandidatura();
         eleicaoDeLider.eleicaoEReeleicaoDeLider();
         principal.executar();
